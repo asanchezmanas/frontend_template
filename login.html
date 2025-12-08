@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - RAG Ecommerce</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-bg) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+    
+    .auth-container {
+      width: 100%;
+      max-width: 420px;
+    }
+    
+    .auth-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    
+    .logo {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-bold);
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+    
+    .auth-header h1 {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-2);
+    }
+    
+    .auth-header p {
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: var(--space-6) 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .divider span {
+      padding: 0 var(--space-3);
+      color: var(--color-text-tertiary);
+      font-size: var(--text-sm);
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--space-6);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .back-home {
+      display: inline-block;
+      margin-top: var(--space-6);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: var(--text-sm);
+    }
+    
+    .back-home:hover {
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo">⚡ RAG Ecommerce</div>
+        <h1>Bienvenido de vuelta</h1>
+        <p>Inicia sesión en tu cuenta</p>
+      </div>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label form-label-required">Email</label>
+          <input 
+            type="email" 
+            id="email"
+            class="form-input" 
+            placeholder="tu@email.com"
+            required
+            autocomplete="email"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label form-label-required">Contraseña</label>
+          <input 
+            type="password" 
+            id="password"
+            class="form-input" 
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          />
+          <span class="form-hint">Mínimo 8 caracteres</span>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: var(--space-6);">
+          <label class="form-checkbox">
+            <input type="checkbox" id="remember">
+            <span class="text-sm">Recordarme</span>
+          </label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
+          Iniciar Sesión
+        </button>
+        
+        <div style="text-align: center; margin-top: var(--space-4);">
+          <a href="#" class="text-sm" style="color: var(--color-primary);">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+      </form>
+      
+      <div class="divider">
+        <span>o prueba gratis</span>
+      </div>
+      
+      <a href="/signup.html" class="btn btn-secondary btn-block">
+        Crear Cuenta Nueva
+      </a>
+      
+      <div class="auth-footer">
+        <p class="text-sm text-secondary">
+          Sin tarjeta. Sin compromiso. Cancela cuando quieras.
+        </p>
+      </div>
+    </div>
+    
+    <a href="/" class="back-home">← Volver al inicio</a>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/storage.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  
+  <script>
+    /**
+     * Handle login form submission
+     */
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+      
+      // Validation
+      if (!utils.isValidEmail(email)) {
+        toast.error('Por favor, introduce un email válido');
+        return;
+      }
+      
+      if (password.length < 8) {
+        toast.error('La contraseña debe tener al menos 8 caracteres');
+        return;
+      }
+      
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Iniciando sesión...';
+      
+      try {
+        // Call login API
+        await auth.login(email, password);
+        
+        // Success
+        toast.success('¡Bienvenido de vuelta!');
+        
+        // Redirect to dashboard or redirect URL
+        const redirectUrl = auth.getRedirectUrl();
+        
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 500);
+        
+      } catch (error) {
+        // Error handling
+        console.error('Login error:', error);
+        
+        let errorMessage = 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
+        
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          errorMessage = 'Email o contraseña incorrectos';
+        } else if (error.message.includes('Network')) {
+          errorMessage = 'Error de conexión. Por favor, verifica tu internet.';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        toast.error(errorMessage);
+        
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Iniciar Sesión';
+      }
+    }
+    
+    // Auto-focus email field
+    document.getElementById('email').focus();
+    
+    // Demo mode - remove in production
+    // Uncomment for quick testing:
+    /*
+    document.getElementById('email').value = 'demo@example.com';
+    document.getElementById('password').value = 'password123';
+    */
+  </script>
+</body>
+</html>
