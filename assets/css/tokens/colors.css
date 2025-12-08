@@ -1,0 +1,136 @@
+/* src/assets/css/tokens/colors.css */
+:root {
+  /* ========== PRIMITIVES ========== */
+  /* Grays */
+  --gray-50: hsl(220, 14%, 96%);
+  --gray-100: hsl(220, 13%, 91%);
+  --gray-200: hsl(220, 13%, 82%);
+  --gray-300: hsl(220, 11%, 65%);
+  --gray-400: hsl(220, 10%, 46%);
+  --gray-500: hsl(220, 9%, 33%);
+  --gray-600: hsl(220, 13%, 23%);
+  --gray-700: hsl(220, 15%, 17%);
+  --gray-800: hsl(220, 18%, 12%);
+  --gray-900: hsl(220, 26%, 7%);
+  --gray-950: hsl(220, 35%, 3%);
+  
+  /* Blues */
+  --blue-50: hsl(221, 83%, 97%);
+  --blue-100: hsl(221, 83%, 93%);
+  --blue-200: hsl(221, 84%, 87%);
+  --blue-300: hsl(221, 84%, 77%);
+  --blue-400: hsl(221, 84%, 67%);
+  --blue-500: hsl(221, 84%, 57%);
+  --blue-600: hsl(221, 70%, 50%);
+  --blue-700: hsl(221, 70%, 43%);
+  --blue-800: hsl(221, 70%, 36%);
+  --blue-900: hsl(221, 70%, 29%);
+  
+  /* Greens */
+  --green-50: hsl(142, 76%, 96%);
+  --green-100: hsl(141, 79%, 90%);
+  --green-500: hsl(142, 71%, 45%);
+  --green-600: hsl(142, 76%, 36%);
+  --green-700: hsl(142, 77%, 29%);
+  
+  /* Reds */
+  --red-50: hsl(0, 86%, 97%);
+  --red-100: hsl(0, 93%, 94%);
+  --red-500: hsl(0, 84%, 60%);
+  --red-600: hsl(0, 72%, 51%);
+  --red-700: hsl(0, 74%, 42%);
+  
+  /* Oranges */
+  --orange-50: hsl(33, 100%, 96%);
+  --orange-100: hsl(34, 100%, 92%);
+  --orange-500: hsl(25, 95%, 53%);
+  --orange-600: hsl(21, 90%, 48%);
+  --orange-700: hsl(17, 88%, 40%);
+  
+  /* Purples */
+  --purple-50: hsl(250, 100%, 98%);
+  --purple-100: hsl(251, 91%, 95%);
+  --purple-500: hsl(250, 83%, 67%);
+  --purple-600: hsl(250, 78%, 60%);
+  --purple-700: hsl(250, 67%, 51%);
+  
+  /* ========== SEMANTIC TOKENS ========== */
+  /* Backgrounds */
+  --color-bg-primary: var(--gray-50);
+  --color-bg-secondary: white;
+  --color-bg-tertiary: var(--gray-100);
+  --color-bg-inverse: var(--gray-900);
+  --color-bg-overlay: hsl(220 26% 7% / 0.5);
+  
+  /* Surfaces */
+  --color-surface-primary: white;
+  --color-surface-secondary: var(--gray-50);
+  --color-surface-raised: white;
+  
+  /* Borders */
+  --color-border-primary: var(--gray-200);
+  --color-border-secondary: var(--gray-300);
+  --color-border-focus: var(--blue-500);
+  
+  /* Text */
+  --color-text-primary: var(--gray-900);
+  --color-text-secondary: var(--gray-600);
+  --color-text-tertiary: var(--gray-500);
+  --color-text-disabled: var(--gray-400);
+  --color-text-inverse: white;
+  --color-text-link: var(--blue-600);
+  --color-text-link-hover: var(--blue-700);
+  
+  /* Actions */
+  --color-action-primary: var(--blue-600);
+  --color-action-primary-hover: var(--blue-700);
+  --color-action-primary-active: var(--blue-800);
+  --color-action-secondary: var(--gray-100);
+  --color-action-secondary-hover: var(--gray-200);
+  
+  /* States */
+  --color-success: var(--green-600);
+  --color-success-bg: var(--green-50);
+  --color-success-border: var(--green-200);
+  
+  --color-error: var(--red-600);
+  --color-error-bg: var(--red-50);
+  --color-error-border: var(--red-200);
+  
+  --color-warning: var(--orange-600);
+  --color-warning-bg: var(--orange-50);
+  --color-warning-border: var(--orange-200);
+  
+  --color-info: var(--blue-600);
+  --color-info-bg: var(--blue-50);
+  --color-info-border: var(--blue-200);
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --color-bg-primary: var(--gray-950);
+  --color-bg-secondary: var(--gray-900);
+  --color-bg-tertiary: var(--gray-800);
+  --color-bg-inverse: white;
+  
+  --color-surface-primary: var(--gray-900);
+  --color-surface-secondary: var(--gray-800);
+  --color-surface-raised: var(--gray-800);
+  
+  --color-border-primary: var(--gray-700);
+  --color-border-secondary: var(--gray-600);
+  
+  --color-text-primary: var(--gray-50);
+  --color-text-secondary: var(--gray-300);
+  --color-text-tertiary: var(--gray-400);
+  --color-text-disabled: var(--gray-500);
+  --color-text-inverse: var(--gray-900);
+  
+  --color-action-secondary: var(--gray-800);
+  --color-action-secondary-hover: var(--gray-700);
+  
+  --color-success-bg: hsl(142, 76%, 10%);
+  --color-error-bg: hsl(0, 86%, 10%);
+  --color-warning-bg: hsl(33, 100%, 10%);
+  --color-info-bg: hsl(221, 83%, 10%);
+}

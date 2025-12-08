@@ -1,0 +1,22 @@
+/* assets/css/main.css */
+/**
+ * Main CSS Entry Point
+ * Imports all styles in correct order
+ */
+
+/* 1. Design Tokens */
+@import './tokens/index.css';
+
+/* 2. Base Styles */
+@import './base/reset.css';
+@import './base/base.css';
+@import './base/utilities.css';
+
+/* 3. Components */
+@import './components/header.css';
+@import './components/footer.css';
+@import './components/modal.css';
+@import './components/toast.css';
+@import './components/datatable.css';
+
+/* 4. Page-specific styles can be imported here or in individual pages */
