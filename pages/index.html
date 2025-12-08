@@ -1,0 +1,59 @@
+<!-- pages/index.html -->
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Frontend Pro</title>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  
+  <!-- CSS - Order matters -->
+  <link rel="stylesheet" href="../assets/css/tokens/index.css">
+  <link rel="stylesheet" href="../assets/css/base/reset.css">
+  <link rel="stylesheet" href="../assets/css/base/base.css">
+  <link rel="stylesheet" href="../assets/css/base/utilities.css">
+  <link rel="stylesheet" href="../assets/css/components/header.css">
+  <link rel="stylesheet" href="../assets/css/components/footer.css">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  
+  <!-- Import Maps for dependencies -->
+  <script type="importmap">
+    {
+      "imports": {
+        "apexcharts": "https://cdn.jsdelivr.net/npm/apexcharts@3.45.0/dist/apexcharts.esm.js"
+      }
+    }
+  </script>
+  
+  <!-- Main app - ES Module -->
+  <script type="module" src="../assets/js/main.js"></script>
+</head>
+
+<body data-page="home">
+  <!-- Skip to main content for a11y -->
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
+  
+  <!-- Header Component -->
+  <app-header></app-header>
+  
+  <!-- Main Content -->
+  <main id="main-content">
+    <div class="container">
+      <h1>Frontend Template Pro</h1>
+      <p>Sistema modular, escalable y sin frameworks</p>
+      
+      <!-- Toast Container -->
+      <div id="toast-container"></div>
+    </div>
+  </main>
+  
+  <!-- Footer Component -->
+  <app-footer></app-footer>
+  
+  <!-- Modal Container -->
+  <div id="modal-container"></div>
+</body>
+</html>

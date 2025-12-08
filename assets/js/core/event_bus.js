@@ -1,185 +1,148 @@
-// static/js/core/event-bus.js
-
+// assets/js/core/event-bus.js
 /**
- * Event Bus - Sistema centralizado de eventos
- * 
- * Permite comunicación desacoplada entre módulos
+ * Event Bus
+ * Global pub/sub system for decoupled communication
  */
+
 class EventBus {
-    constructor() {
-        this.events = new Map();
-        this.wildcardListeners = [];
-        this.debug = false;
+  constructor(options = {}) {
+    this.options = {
+      debug: false,
+      maxListeners: 10,
+      ...options
+    };
+
+    this.events = new Map();
+    // ❌ Removido: this.onceEvents = new Map(); (no se usa)
+  }
+
+  /**
+   * Subscribe to an event
+   */
+  on(event, callback, context = null) {
+    if (typeof callback !== 'function') {
+      throw new TypeError('Callback must be a function');
     }
+
+    if (!this.events.has(event)) {
+      this.events.set(event, []);
+    }
+
+    const listeners = this.events.get(event);
     
-    /**
-     * Suscribirse a un evento
-     * @param {string} event - Nombre del evento
-     * @param {Function} callback - Función a ejecutar
-     * @param {Object} options - Opciones (once, priority)
-     * @returns {Function} Función para desuscribirse
-     */
-    on(event, callback, options = {}) {
-        if (!this.events.has(event)) {
-            this.events.set(event, []);
-        }
-        
-        const listener = { 
-            callback,
-            id: this.generateId(),
-            once: options.once || false,
-            priority: options.priority || 0
-        };
-        
-        const listeners = this.events.get(event);
-        listeners.push(listener);
-        
-        // Ordenar por prioridad (mayor primero)
-        listeners.sort((a, b) => b.priority - a.priority);
-        
-        if (this.debug) {
-            console.log(`[EventBus] Listener registered: ${event}`, listener.id);
-        }
-        
-        // Retornar función para desuscribirse
-        return () => this.off(event, listener.id);
+    // Warn if too many listeners
+    if (listeners.length >= this.options.maxListeners) {
+      console.warn(`EventBus: Event "${event}" has ${listeners.length} listeners (max: ${this.options.maxListeners})`);
     }
+
+    listeners.push({ callback, context });
+
+    if (this.options.debug) {
+      console.log(`[EventBus] Subscribed to "${event}"`);
+    }
+
+    // Return unsubscribe function
+    return () => this.off(event, callback);
+  }
+
+  /**
+   * Subscribe to event only once
+   */
+  once(event, callback, context = null) {
+    if (typeof callback !== 'function') {
+      throw new TypeError('Callback must be a function');
+    }
+
+    const wrappedCallback = (...args) => {
+      callback.apply(context, args);
+      this.off(event, wrappedCallback);
+    };
+
+    return this.on(event, wrappedCallback, context);
+  }
+
+  /**
+   * Unsubscribe from an event
+   */
+  off(event, callback = null) {
+    if (!this.events.has(event)) {
+      return;
+    }
+
+    if (callback === null) {
+      // Remove all listeners for this event
+      this.events.delete(event);
+      if (this.options.debug) {
+        console.log(`[EventBus] Removed all listeners for "${event}"`);
+      }
+      return;
+    }
+
+    // Remove specific callback
+    const listeners = this.events.get(event);
+    const index = listeners.findIndex(listener => listener.callback === callback);
     
-    /**
-     * Suscribirse una sola vez
-     */
-    once(event, callback) {
-        return this.on(event, callback, { once: true });
+    if (index !== -1) {
+      listeners.splice(index, 1);
+      if (this.options.debug) {
+        console.log(`[EventBus] Unsubscribed from "${event}"`);
+      }
     }
+
+    // Remove event if no listeners left
+    if (listeners.length === 0) {
+      this.events.delete(event);
+    }
+  }
+
+  /**
+   * Emit an event
+   */
+  emit(event, data = null) {
+    if (this.options.debug) {
+      console.log(`[EventBus] Emit "${event}"`, data);
+    }
+
+    if (!this.events.has(event)) {
+      return;
+    }
+
+    const listeners = this.events.get(event).slice(); // Clone to avoid issues if modified during emit
+
+    listeners.forEach(({ callback, context }) => {
+      try {
+        callback.call(context, data);
+      } catch (error) {
+        console.error(`EventBus: Error in listener for "${event}":`, error);
+      }
+    });
+  }
+
+  /**
+   * Get listener count for event
+   */
+  listenerCount(event) {
+    return this.events.has(event) ? this.events.get(event).length : 0;
+  }
+
+  /**
+   * Get all event names
+   */
+  eventNames() {
+    return Array.from(this.events.keys());
+  }
+
+  /**
+   * Remove all listeners
+   */
+  removeAllListeners() {
+    this.events.clear();
+    // ❌ Removido: this.onceEvents.clear(); (no existe)
     
-    /**
-     * Desuscribirse de un evento
-     */
-    off(event, listenerId) {
-        const listeners = this.events.get(event);
-        if (!listeners) return false;
-        
-        const index = listeners.findIndex(l => l.id === listenerId);
-        if (index !== -1) {
-            listeners.splice(index, 1);
-            
-            if (this.debug) {
-                console.log(`[EventBus] Listener removed: ${event}`, listenerId);
-            }
-            
-            return true;
-        }
-        return false;
+    if (this.options.debug) {
+      console.log('[EventBus] Removed all listeners');
     }
-    
-    /**
-     * Emitir un evento
-     */
-    emit(event, data) {
-        const listeners = this.events.get(event) || [];
-        const toRemove = [];
-        
-        if (this.debug) {
-            console.log(`[EventBus] Emitting: ${event}`, data);
-        }
-        
-        // Ejecutar listeners específicos
-        listeners.forEach((listener) => {
-            try {
-                listener.callback(data);
-                
-                if (listener.once) {
-                    toRemove.push(listener.id);
-                }
-            } catch (error) {
-                console.error(`[EventBus] Error in listener for ${event}:`, error);
-            }
-        });
-        
-        // Ejecutar wildcard listeners
-        this.wildcardListeners.forEach((listener) => {
-            try {
-                listener.callback(event, data);
-            } catch (error) {
-                console.error(`[EventBus] Error in wildcard listener:`, error);
-            }
-        });
-        
-        // Remover listeners "once"
-        toRemove.forEach(id => this.off(event, id));
-    }
-    
-    /**
-     * Suscribirse a todos los eventos (wildcard)
-     */
-    onAny(callback) {
-        const listener = {
-            callback,
-            id: this.generateId()
-        };
-        
-        this.wildcardListeners.push(listener);
-        
-        return () => {
-            const index = this.wildcardListeners.findIndex(l => l.id === listener.id);
-            if (index !== -1) {
-                this.wildcardListeners.splice(index, 1);
-            }
-        };
-    }
-    
-    /**
-     * Remover todos los listeners de un evento
-     */
-    removeAllListeners(event) {
-        if (event) {
-            this.events.delete(event);
-        } else {
-            this.events.clear();
-            this.wildcardListeners = [];
-        }
-    }
-    
-    /**
-     * Obtener lista de eventos registrados
-     */
-    getEventNames() {
-        return Array.from(this.events.keys());
-    }
-    
-    /**
-     * Obtener número de listeners para un evento
-     */
-    listenerCount(event) {
-        const listeners = this.events.get(event);
-        return listeners ? listeners.length : 0;
-    }
-    
-    /**
-     * Generar ID único
-     */
-    generateId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-    
-    /**
-     * Habilitar modo debug
-     */
-    enableDebug() {
-        this.debug = true;
-    }
-    
-    /**
-     * Deshabilitar modo debug
-     */
-    disableDebug() {
-        this.debug = false;
-    }
+  }
 }
 
-// Export
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = EventBus;
-} else {
-    window.EventBus = EventBus;
-}
+export { EventBus };
