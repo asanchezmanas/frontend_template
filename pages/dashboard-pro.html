@@ -1,0 +1,623 @@
+<!-- pages/dashboard-pro.html -->
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard - Frontend Template Pro">
+  
+  <title>Dashboard - Template Pro</title>
+  
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  
+  <!-- Fonts - Inter con más pesos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Profesional -->
+  <link rel="stylesheet" href="../assets/css/tokens/index.css">
+  <link rel="stylesheet" href="../assets/css/base/reset.css">
+  <link rel="stylesheet" href="./colors-pro.css">
+  <link rel="stylesheet" href="./effects-pro.css">
+  <link rel="stylesheet" href="./base-pro.css">
+  <link rel="stylesheet" href="../assets/css/base/utilities.css">
+  <link rel="stylesheet" href="../assets/css/components/header.css">
+  <link rel="stylesheet" href="../assets/css/components/footer.css">
+  <link rel="stylesheet" href="../assets/css/components/datatable.css">
+  
+  <!-- Custom Dashboard Styles -->
+  <style>
+    /* Dashboard-specific styles */
+    .dashboard-header {
+      padding: var(--space-8) 0;
+      background: linear-gradient(135deg, 
+        var(--color-bg-primary) 0%, 
+        var(--color-bg-tertiary) 100%
+      );
+      border-bottom: 1px solid var(--color-border-primary);
+      margin-bottom: var(--space-8);
+    }
+
+    .dashboard-title {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dashboard-subtitle {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-secondary);
+    }
+
+    /* Stats Grid con mejor espaciado */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    /* Chart container mejorado */
+    .chart-container {
+      min-height: 350px;
+      position: relative;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top right,
+        var(--primary-50) 0%,
+        transparent 60%
+      );
+      opacity: 0.3;
+      pointer-events: none;
+      border-radius: var(--radius-xl);
+    }
+
+    [data-theme="dark"] .chart-container::before {
+      background: radial-gradient(
+        circle at top right,
+        hsl(221 83% 20% / 0.1) 0%,
+        transparent 60%
+      );
+    }
+
+    /* Tabla con mejor espaciado */
+    .transactions-table {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    /* Quick actions */
+    .quick-actions {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-lg);
+      color: var(--color-text-primary);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .quick-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-500);
+      color: var(--primary-600);
+    }
+
+    /* Activity feed */
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .activity-item {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+    }
+
+    .activity-item:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: var(--color-border-hover);
+    }
+
+    .activity-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+
+    .activity-icon--success {
+      background: var(--success-100);
+      color: var(--success-600);
+    }
+
+    .activity-icon--info {
+      background: var(--info-100);
+      color: var(--info-600);
+    }
+
+    .activity-icon--warning {
+      background: var(--warning-100);
+      color: var(--warning-600);
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .activity-time {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-title {
+        font-size: var(--font-size-3xl);
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+      }
+    }
+  </style>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+  
+  <!-- Import Maps -->
+  <script type="importmap">
+    {
+      "imports": {
+        "apexcharts": "https://cdn.jsdelivr.net/npm/apexcharts@3.45.0/dist/apexcharts.esm.js"
+      }
+    }
+  </script>
+  
+  <!-- Main app -->
+  <script type="module" src="../assets/js/main.js"></script>
+</head>
+
+<body data-page="dashboard">
+  <!-- Skip to main -->
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
+  
+  <!-- Header -->
+  <app-header fixed></app-header>
+  
+  <!-- Main Content -->
+  <main id="main-content">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="container">
+        <div class="d-flex justify-between align-center flex-wrap gap-4">
+          <div>
+            <h1 class="dashboard-title">Dashboard</h1>
+            <p class="dashboard-subtitle">Bienvenido de nuevo, Juan 👋</p>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="quick-actions">
+            <button class="quick-action-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+              Nuevo Cliente
+            </button>
+            <button class="quick-action-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              Exportar Datos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <!-- Stat Card 1 - Usuarios -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Total Usuarios</span>
+            <div class="stat-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card__value">2,543</div>
+          <div class="stat-card__change">
+            <span class="badge badge--success">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              12.5%
+            </span>
+            <span class="text-xs text-tertiary">vs mes anterior</span>
+          </div>
+        </div>
+
+        <!-- Stat Card 2 - Ingresos -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Ingresos</span>
+            <div class="stat-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card__value">€45,231</div>
+          <div class="stat-card__change">
+            <span class="badge badge--success">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              8.2%
+            </span>
+            <span class="text-xs text-tertiary">vs mes anterior</span>
+          </div>
+        </div>
+
+        <!-- Stat Card 3 - Conversiones -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Conversiones</span>
+            <div class="stat-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card__value">3.2%</div>
+          <div class="stat-card__change">
+            <span class="badge badge--error">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+              2.4%
+            </span>
+            <span class="text-xs text-tertiary">vs mes anterior</span>
+          </div>
+        </div>
+
+        <!-- Stat Card 4 - Sesiones -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Sesiones</span>
+            <div class="stat-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card__value">12,543</div>
+          <div class="stat-card__change">
+            <span class="badge badge--success">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              18.7%
+            </span>
+            <span class="text-xs text-tertiary">vs mes anterior</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Revenue Chart -->
+        <div class="card card--elevated">
+          <div class="card__header">
+            <h3 class="card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="20" x2="12" y2="10"/>
+                <line x1="18" y1="20" x2="18" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="16"/>
+              </svg>
+              Ingresos Mensuales
+            </h3>
+          </div>
+          <div class="card__body">
+            <div class="chart-container" id="revenue-chart"></div>
+          </div>
+        </div>
+
+        <!-- Device Chart -->
+        <div class="card card--elevated">
+          <div class="card__header">
+            <h3 class="card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+              Dispositivos
+            </h3>
+          </div>
+          <div class="card__body">
+            <div class="chart-container" id="device-chart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Transactions Table (2/3) -->
+        <div class="lg:col-span-2">
+          <div class="card card--elevated">
+            <div class="card__header">
+              <h3 class="card__title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+                  <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+                  <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                Transacciones Recientes
+              </h3>
+            </div>
+            <div class="card__body p-0">
+              <div id="transactions-table" class="transactions-table"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed (1/3) -->
+        <div>
+          <div class="card card--elevated">
+            <div class="card__header">
+              <h3 class="card__title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                Actividad Reciente
+              </h3>
+            </div>
+            <div class="card__body">
+              <div class="activity-feed">
+                <div class="activity-item">
+                  <div class="activity-icon activity-icon--success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">Nuevo cliente registrado</div>
+                    <div class="activity-time">Hace 5 minutos</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon activity-icon--info">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="1" x2="12" y2="23"/>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">Pago recibido: €1,250</div>
+                    <div class="activity-time">Hace 15 minutos</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon activity-icon--warning">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="8" x2="12" y2="12"/>
+                      <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">Inventario bajo en stock</div>
+                    <div class="activity-time">Hace 1 hora</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon activity-icon--success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">5 usuarios activos ahora</div>
+                    <div class="activity-time">Hace 2 horas</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+  </main>
+  
+  <!-- Footer -->
+  <app-footer></app-footer>
+  
+  <!-- Initialize Dashboard -->
+  <script type="module">
+    import { ChartManager } from '../assets/js/modules/charts/chart-manager.js';
+    import { DataTable } from '../assets/js/modules/datatable/datatable.js';
+
+    // Wait for app to be ready
+    window.addEventListener('load', async () => {
+      await window.app.ready;
+
+      // Initialize Revenue Chart (Area con gradiente)
+      await ChartManager.create('#revenue-chart', {
+        chart: {
+          type: 'area',
+          height: 320,
+          toolbar: {
+            show: false
+          }
+        },
+        series: [{
+          name: 'Ingresos',
+          data: [12000, 19000, 15000, 21000, 28000, 35000, 45000, 38000, 42000, 48000, 52000, 58000]
+        }],
+        xaxis: {
+          categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.2,
+            stops: [0, 90, 100]
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 3
+        }
+      });
+
+      // Initialize Device Chart (Donut mejorado)
+      await ChartManager.create('#device-chart', {
+        chart: {
+          type: 'donut',
+          height: 320
+        },
+        series: [44, 33, 23],
+        labels: ['Desktop', 'Mobile', 'Tablet'],
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '75%',
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Total',
+                  fontSize: '16px',
+                  fontWeight: 600
+                }
+              }
+            }
+          }
+        },
+        legend: {
+          position: 'bottom'
+        }
+      });
+
+      // Initialize DataTable
+      new DataTable('#transactions-table', {
+        columns: [
+          { key: 'id', label: 'ID' },
+          { key: 'customer', label: 'Cliente' },
+          { key: 'amount', label: 'Monto', format: 'currency' },
+          { 
+            key: 'status', 
+            label: 'Estado', 
+            render: (value) => {
+              const variants = {
+                'completed': 'success',
+                'pending': 'warning',
+                'failed': 'error'
+              };
+              const labels = {
+                'completed': 'Completado',
+                'pending': 'Pendiente',
+                'failed': 'Fallido'
+              };
+              return `<span class="badge badge--${variants[value]}">${labels[value]}</span>`;
+            }
+          },
+          { key: 'date', label: 'Fecha', format: 'date' }
+        ],
+        data: [
+          { id: '001', customer: 'Juan Pérez', amount: 1250, status: 'completed', date: '2024-12-08' },
+          { id: '002', customer: 'María García', amount: 890, status: 'completed', date: '2024-12-08' },
+          { id: '003', customer: 'Carlos López', amount: 2100, status: 'pending', date: '2024-12-07' },
+          { id: '004', customer: 'Ana Martínez', amount: 750, status: 'completed', date: '2024-12-07' },
+          { id: '005', customer: 'Luis Rodríguez', amount: 1500, status: 'failed', date: '2024-12-06' },
+          { id: '006', customer: 'Sofia Fernández', amount: 3200, status: 'completed', date: '2024-12-06' },
+          { id: '007', customer: 'Diego Torres', amount: 980, status: 'pending', date: '2024-12-05' }
+        ],
+        pageSize: 5,
+        sortable: true,
+        searchable: true
+      });
+
+      // Show welcome notification
+      setTimeout(() => {
+        const toast = document.createElement('app-toast');
+        toast.setAttribute('type', 'success');
+        toast.setAttribute('duration', '5000');
+        toast.innerHTML = `
+          <div slot="title">¡Bienvenido!</div>
+          <div slot="message">Dashboard cargado correctamente</div>
+        `;
+        document.getElementById('toast-container').appendChild(toast);
+      }, 500);
+    });
+  </script>
+</body>
+</html>
