@@ -2,62 +2,44 @@ frontend-template/
 ├── assets/
 │   ├── css/
 │   │   ├── tokens/
-│   │   │   ├── colors.css
-│   │   │   ├── typography.css
-│   │   │   ├── spacing.css
-│   │   │   ├── effects.css
-│   │   │   └── index.css
 │   │   ├── base/
-│   │   │   ├── reset.css
-│   │   │   ├── base.css
-│   │   │   └── utilities.css
 │   │   ├── components/
 │   │   └── main.css
 │   │
 │   ├── js/
-│   │   ├── core/
-│   │   │   ├── app.js
-│   │   │   ├── module-loader.js
-│   │   │   ├── event-bus.js
-│   │   │   ├── state-manager.js
-│   │   │   ├── error-handler.js
-│   │   │   └── config.js
-│   │   │
-│   │   ├── components/
-│   │   │   ├── base/
-│   │   │   │   └── base-component.js
-│   │   │   ├── ui/
-│   │   │   │   ├── app-header.js
-│   │   │   │   ├── app-footer.js
-│   │   │   │   ├── app-modal.js
-│   │   │   │   ├── app-toast.js
-│   │   │   │   └── app-button.js
-│   │   │   └── index.js
-│   │   │
-│   │   ├── modules/
-│   │   │   ├── analytics/
-│   │   │   ├── images/
-│   │   │   ├── datatable/
-│   │   │   └── charts/
-│   │   │
-│   │   ├── utils/
-│   │   │   ├── dom.js
-│   │   │   ├── validators.js
-│   │   │   └── helpers.js
-│   │   │
-│   │   └── main.js
+│   │   ├── core/               ← vanilla JS (gestión interna)
+│   │   ├── components/         ← vanilla JS excepto interacción ligera
+│   │   ├── modules/            ← vanilla JS
+│   │   ├── utils/              ← vanilla JS
+│   │   └── main.js             ← inicia todo
+│   │
+│   ├── alpine/                 ← aquí va Alpine.js aislado
+│   │   ├── modals.js
+│   │   ├── darkmode.js
+│   │   ├── sidebar.js
+│   │   └── index.js
 │   │
 │   ├── icons/
 │   └── images/
 │
-├── pages/
-│   ├── index.html
-│   ├── dashboard.html
-│   └── about.html
+├── templates/                  ← Jinja (sustituye "pages/")
+│   ├── base.html               ← layout principal
+│   ├── includes/
+│   │   ├── head.html
+│   │   ├── header.html
+│   │   ├── sidebar.html
+│   │   ├── footer.html
+│   │   └── modals/
+│   │       └── profile-info.html
+│   │
+│   ├── pages/
+│   │   ├── index.html
+│   │   ├── dashboard.html
+│   │   └── about.html
 │
 ├── docs/
 │   ├── SETUP.md
 │   └── COMPONENTS.md
 │
+├── app.py (si usas Flask)
 └── README.md
-
