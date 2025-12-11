@@ -1,0 +1,94 @@
+/* Metric Cards estilo TailAdmin */
+.metric-card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-all);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-border-hover);
+}
+
+/* Gradiente decorativo */
+.metric-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    var(--brand-500) 0%,
+    transparent 70%
+  );
+  opacity: 0.03;
+  transition: opacity var(--duration-normal);
+}
+
+.metric-card:hover::after {
+  opacity: 0.08;
+}
+
+.metric-card__icon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, 
+    var(--gray-100) 0%, 
+    var(--gray-200) 100%
+  );
+  margin-bottom: var(--space-4);
+  transition: var(--transition-transform);
+}
+
+[data-theme="dark"] .metric-card__icon {
+  background: linear-gradient(135deg,
+    hsl(220, 18%, 20%) 0%,
+    hsl(220, 18%, 25%) 100%
+  );
+}
+
+.metric-card:hover .metric-card__icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.metric-card__value {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-3);
+}
+
+.metric-card__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.metric-card__change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-2);
+}
+
+.metric-card__change--up {
+  color: var(--success-600);
+}
+
+.metric-card__change--down {
+  color: var(--error-600);
+}

@@ -1,0 +1,145 @@
+{# 
+  Data Table Component
+  
+  Parameters:
+  - title: Table title
+  - columns: List of column headers
+  - products: List of product objects with:
+    - image: Product image path
+    - name: Product name
+    - variants: Number of variants
+    - category: Product category
+    - price: Product price
+    - status: Order status ('delivered', 'pending', 'canceled')
+#}
+
+<div class="table-container" {% if dark_mode %}data-theme="dark"{% endif %}>
+  <div class="table-header">
+    <div>
+      <h3 class="table-header__title" {% if dark_mode %}data-theme="dark"{% endif %}>
+        {{ title }}
+      </h3>
+    </div>
+
+    <div class="table-header__actions">
+      <button class="table-action-btn" {% if dark_mode %}data-theme="dark"{% endif %}>
+        <svg
+          class="stroke-current fill-white dark:fill-gray-800"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M2.29004 5.90393H17.7067"
+            stroke=""
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M17.7075 14.0961H2.29085"
+            stroke=""
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z"
+            fill=""
+            stroke=""
+            stroke-width="1.5"
+          />
+          <path
+            d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z"
+            fill=""
+            stroke=""
+            stroke-width="1.5"
+          />
+        </svg>
+        Filter
+      </button>
+
+      <button class="table-action-btn" {% if dark_mode %}data-theme="dark"{% endif %}>
+        See all
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrapper" {% if dark_mode %}data-theme="dark"{% endif %}>
+    <table class="data-table" {% if dark_mode %}data-theme="dark"{% endif %}>
+      <!-- Table Header -->
+      <thead>
+        <tr>
+          {% for column in columns %}
+          <th>
+            <div class="table-header-cell">
+              <p class="table-header-label" {% if dark_mode %}data-theme="dark"{% endif %}>
+                {{ column }}
+              </p>
+            </div>
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <!-- Product Cell -->
+          <td>
+            <div class="product-cell">
+              <div class="product-cell__image">
+                <img src="{{ product.image }}" alt="{{ product.name }}" />
+              </div>
+              <div class="product-cell__info">
+                <p class="product-cell__name" {% if dark_mode %}data-theme="dark"{% endif %}>
+                  {{ product.name }}
+                </p>
+                <span class="product-cell__variant" {% if dark_mode %}data-theme="dark"{% endif %}>
+                  {{ product.variants }} Variant{{ 's' if product.variants != 1 }}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <!-- Category Cell -->
+          <td>
+            <p class="table-text" {% if dark_mode %}data-theme="dark"{% endif %}>
+              {{ product.category }}
+            </p>
+          </td>
+
+          <!-- Price Cell -->
+          <td>
+            <p class="table-text" {% if dark_mode %}data-theme="dark"{% endif %}>
+              {{ product.price }}
+            </p>
+          </td>
+
+          <!-- Status Cell -->
+          <td>
+            <div class="flex items-center">
+              {% if product.status == 'delivered' %}
+                <span class="status-badge status-badge--success" {% if dark_mode %}data-theme="dark"{% endif %}>
+                  Delivered
+                </span>
+              {% elif product.status == 'pending' %}
+                <span class="status-badge status-badge--warning" {% if dark_mode %}data-theme="dark"{% endif %}>
+                  Pending
+                </span>
+              {% elif product.status == 'canceled' %}
+                <span class="status-badge status-badge--error" {% if dark_mode %}data-theme="dark"{% endif %}>
+                  Canceled
+                </span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

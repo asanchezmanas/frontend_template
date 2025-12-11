@@ -1,0 +1,23 @@
+<!-- Uso en Jinja: {% include "includes/metric-card.html" with context %} -->
+<div class="metric-card">
+  <div class="metric-card__icon">
+    {{ icon|safe }}
+  </div>
+  
+  <div class="metric-card__value">{{ value }}</div>
+  
+  <div class="metric-card__label">{{ label }}</div>
+  
+  {% if change %}
+  <div class="metric-card__change metric-card__change--{{ 'up' if change > 0 else 'down' }}">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {% if change > 0 %}
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      {% else %}
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      {% endif %}
+    </svg>
+    <span>{{ change|abs }}%</span>
+  </div>
+  {% endif %}
+</div>
