@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" x-data :class="$store.app.darkMode ? 'dark' : ''">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} | Mi App</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  
+  <!-- Alpine.js - Defer para cargar después del DOM -->
+  <script defer src="/assets/js/alpine/index.js"></script>
+</head>
+<body 
+  x-data="{ loaded: true }"
+  x-init="
+    $store.app.init();
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => loaded = false, 500)
+    })
+  "
+  class="bg-gray-50 dark:bg-gray-900"
+>
+  <!-- Preloader -->
+  {% include "includes/preloader.html" %}
+  
+  <!-- Page Wrapper -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    {% include "includes/sidebar.html" %}
+    
+    <!-- Content Area -->
+    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+      <!-- Overlay para móvil -->
+      {% include "includes/overlay.html" %}
+      
+      <!-- Header -->
+      {% include "includes/header.html" %}
+      
+      <!-- Main Content -->
+      <main class="p-4 mx-auto max-w-7xl md:p-6">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  
+  <!-- JS Principal (carga todo lo demás) -->
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

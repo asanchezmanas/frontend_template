@@ -1,0 +1,41 @@
+/* Colores extraídos de TailAdmin */
+:root {
+  /* Brand Colors - TailAdmin style */
+  --brand-50: hsl(221, 100%, 98%);
+  --brand-100: hsl(221, 100%, 95%);
+  --brand-200: hsl(221, 97%, 90%);
+  --brand-300: hsl(221, 95%, 82%);
+  --brand-400: hsl(221, 91%, 72%);
+  --brand-500: hsl(221, 83%, 63%);  /* Color principal TailAdmin */
+  --brand-600: hsl(221, 70%, 55%);
+  --brand-700: hsl(221, 65%, 48%);
+  --brand-800: hsl(221, 65%, 40%);
+  --brand-900: hsl(221, 60%, 33%);
+
+  /* Grays - Warm tones like TailAdmin */
+  --gray-50: hsl(210, 20%, 98%);
+  --gray-100: hsl(220, 13%, 91%);
+  --gray-200: hsl(220, 13%, 82%);
+  --gray-300: hsl(220, 11%, 65%);
+  --gray-400: hsl(220, 10%, 46%);
+  --gray-500: hsl(220, 9%, 33%);
+  --gray-600: hsl(220, 13%, 23%);
+  --gray-700: hsl(220, 15%, 17%);
+  --gray-800: hsl(220, 18%, 12%);
+  --gray-900: hsl(220, 26%, 7%);
+
+  /* Success - Verde vibrante */
+  --success-50: hsl(142, 90%, 97%);
+  --success-500: hsl(142, 75%, 45%);
+  --success-600: hsl(142, 80%, 38%);
+
+  /* Error - Rojo suave */
+  --error-50: hsl(0, 100%, 98%);
+  --error-500: hsl(0, 85%, 62%);
+  --error-600: hsl(0, 80%, 56%);
+
+  /* Warning - Ámbar */
+  --warning-50: hsl(35, 100%, 97%);
+  --warning-500: hsl(35, 95%, 58%);
+  --warning-600: hsl(35, 90%, 52%);
+}

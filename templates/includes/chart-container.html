@@ -1,0 +1,124 @@
+{# 
+  Chart Container Component
+  
+  Parameters:
+  - chart_id: Unique ID for the chart canvas
+  - title: Chart title
+  - subtitle: Optional chart subtitle
+  - has_dropdown: Boolean for dropdown menu
+  - has_tabs: Boolean for tab switcher
+  - tabs: List of tab options ['overview', 'sales', 'revenue']
+  - has_datepicker: Boolean for date range picker
+  - min_width: Minimum width for responsive scroll (default: 650px)
+#}
+
+<div class="chart-container" {% if dark_mode %}data-theme="dark"{% endif %}>
+  <div class="chart-header">
+    <div>
+      <h3 class="chart-header__title" {% if dark_mode %}data-theme="dark"{% endif %}>
+        {{ title }}
+      </h3>
+      {% if subtitle %}
+      <p class="chart-header__subtitle" {% if dark_mode %}data-theme="dark"{% endif %}>
+        {{ subtitle }}
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="chart-controls">
+      {% if has_tabs %}
+      <div
+        x-data="{selected: '{{ tabs[0] if tabs else '' }}'}"
+        class="chart-tabs"
+        {% if dark_mode %}data-theme="dark"{% endif %}
+      >
+        {% for tab in tabs %}
+        <button
+          @click="selected = '{{ tab }}'"
+          :class="selected === '{{ tab }}' ? 'chart-tabs__button chart-tabs__button--active' : 'chart-tabs__button'"
+        >
+          {{ tab|title }}
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if has_datepicker %}
+      <div class="chart-datepicker">
+        <input
+          class="chart-datepicker__input"
+          {% if dark_mode %}data-theme="dark"{% endif %}
+          placeholder="Select dates"
+          data-class="flatpickr-right"
+          readonly="readonly"
+        />
+        <div class="chart-datepicker__icon">
+          <svg
+            class="fill-gray-700 dark:fill-gray-400"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M6.66683 1.54199C7.08104 1.54199 7.41683 1.87778 7.41683 2.29199V3.00033H12.5835V2.29199C12.5835 1.87778 12.9193 1.54199 13.3335 1.54199C13.7477 1.54199 14.0835 1.87778 14.0835 2.29199V3.00033L15.4168 3.00033C16.5214 3.00033 17.4168 3.89576 17.4168 5.00033V7.50033V15.8337C17.4168 16.9382 16.5214 17.8337 15.4168 17.8337H4.5835C3.47893 17.8337 2.5835 16.9382 2.5835 15.8337V7.50033V5.00033C2.5835 3.89576 3.47893 3.00033 4.5835 3.00033L5.91683 3.00033V2.29199C5.91683 1.87778 6.25262 1.54199 6.66683 1.54199ZM6.66683 4.50033H4.5835C4.30735 4.50033 4.0835 4.72418 4.0835 5.00033V6.75033H15.9168V5.00033C15.9168 4.72418 15.693 4.50033 15.4168 4.50033H13.3335H6.66683ZM15.9168 8.25033H4.0835V15.8337C4.0835 16.1098 4.30735 16.3337 4.5835 16.3337H15.4168C15.693 16.3337 15.9168 16.1098 15.9168 15.8337V8.25033Z"
+              fill=""
+            />
+          </svg>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if has_dropdown %}
+      <div x-data="{openDropDown: false}" class="relative h-fit">
+        <button
+          @click="openDropDown = !openDropDown"
+          :class="openDropDown ? 'text-gray-700 dark:text-white' : 'text-gray-400 hover:text-gray-700 dark:hover:text-white'"
+        >
+          <svg
+            class="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z"
+              fill=""
+            />
+          </svg>
+        </button>
+        <div
+          x-show="openDropDown"
+          @click.outside="openDropDown = false"
+          x-transition
+          class="absolute right-0 z-40 w-40 p-2 space-y-1 bg-white border border-gray-200 top-full rounded-2xl shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+        >
+          <button
+            class="flex w-full px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+          >
+            View More
+          </button>
+          <button
+            class="flex w-full px-3 py-2 font-medium text-left text-gray-500 rounded-lg text-theme-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="chart-scroll-wrapper" {% if dark_mode %}data-theme="dark"{% endif %}>
+    <div class="chart-inner" style="min-width: {{ min_width|default('650px') }}">
+      <div id="{{ chart_id }}" class="chart-canvas"></div>
+    </div>
+  </div>
+</div>
