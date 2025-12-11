@@ -1,0 +1,272 @@
+<!-- 
+  Loading Overlay Component
+  
+  Full-screen loading indicator with message
+  Works with Alpine.js for reactivity
+  
+  Usage in base.html (before </body>):
+  {% include 'includes/loading-overlay.html' %}
+  
+  Control from JavaScript:
+  window.showLoading();
+  window.showLoading('Processing...');
+  window.hideLoading();
+  
+  Or dispatch events:
+  window.dispatchEvent(new CustomEvent('loading:show', {
+    detail: { message: 'Loading...' }
+  }));
+  window.dispatchEvent(new CustomEvent('loading:hide'));
+-->
+
+<div
+  x-data="loadingOverlay()"
+  x-init="init()"
+  x-show="isVisible"
+  x-cloak
+  class="loading-overlay"
+  x-transition:enter="loading-overlay-enter"
+  x-transition:enter-start="loading-overlay-enter-start"
+  x-transition:enter-end="loading-overlay-enter-end"
+  x-transition:leave="loading-overlay-leave"
+  x-transition:leave-start="loading-overlay-leave-start"
+  x-transition:leave-end="loading-overlay-leave-end"
+>
+  <div class="loading-overlay__backdrop"></div>
+  
+  <div class="loading-overlay__content">
+    <!-- Spinner -->
+    <div class="loading-spinner">
+      <svg class="loading-spinner__svg" viewBox="0 0 50 50">
+        <circle class="loading-spinner__circle" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+      </svg>
+    </div>
+    
+    <!-- Message -->
+    <p class="loading-overlay__message" x-text="message"></p>
+  </div>
+</div>
+
+<script>
+/**
+ * Loading Overlay Alpine.js Component
+ */
+document.addEventListener('alpine:init', () => {
+  Alpine.data('loadingOverlay', () => ({
+    isVisible: false,
+    message: 'Loading...',
+    defaultMessage: 'Loading...',
+
+    init() {
+      // Listen for global loading events
+      window.addEventListener('loading:show', (event) => {
+        this.show(event.detail?.message);
+      });
+
+      window.addEventListener('loading:hide', () => {
+        this.hide();
+      });
+
+      // Listen for API events
+      window.addEventListener('api:request:start', (event) => {
+        if (event.detail?.showLoading !== false) {
+          this.show(event.detail?.message || 'Loading...');
+        }
+      });
+
+      window.addEventListener('api:request:end', () => {
+        this.hide();
+      });
+
+      window.addEventListener('api:request:error', () => {
+        this.hide();
+      });
+    },
+
+    show(msg = null) {
+      this.message = msg || this.defaultMessage;
+      this.isVisible = true;
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    },
+
+    hide() {
+      this.isVisible = false;
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+  }));
+});
+
+/**
+ * Global helper functions
+ */
+window.showLoading = function(message = null) {
+  window.dispatchEvent(new CustomEvent('loading:show', {
+    detail: { message }
+  }));
+};
+
+window.hideLoading = function() {
+  window.dispatchEvent(new CustomEvent('loading:hide'));
+};
+
+/**
+ * Auto-show loading for fetch requests (optional)
+ * Uncomment to enable automatic loading overlay for all fetch calls
+ */
+/*
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+  // Don't show loading for background requests
+  const options = args[1] || {};
+  if (options.background !== true) {
+    window.showLoading();
+  }
+  
+  return originalFetch.apply(this, args)
+    .finally(() => {
+      if (options.background !== true) {
+        window.hideLoading();
+      }
+    });
+};
+*/
+</script>
+
+<style>
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.loading-overlay__content {
+  position: relative;
+  z-index: 1;
+  
+  background: white;
+  border-radius: var(--radius-xl, 1rem);
+  padding: 2rem;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  
+  min-width: 200px;
+  box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgb(0 0 0 / 0.5));
+}
+
+.loading-overlay__message {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  text-align: center;
+}
+
+/* Spinner */
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+}
+
+.loading-spinner__svg {
+  animation: loading-spin 1s linear infinite;
+  transform-origin: center;
+}
+
+.loading-spinner__circle {
+  stroke: var(--color-brand-500, #3b82f6);
+  stroke-linecap: round;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  animation: loading-dash 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* Overlay Transitions */
+.loading-overlay-enter {
+  transition: opacity 0.2s ease-out;
+}
+
+.loading-overlay-enter-start {
+  opacity: 0;
+}
+
+.loading-overlay-enter-end {
+  opacity: 1;
+}
+
+.loading-overlay-leave {
+  transition: opacity 0.15s ease-in;
+}
+
+.loading-overlay-leave-start {
+  opacity: 1;
+}
+
+.loading-overlay-leave-end {
+  opacity: 0;
+}
+
+/* Dark Mode */
+.dark .loading-overlay__content,
+[data-theme="dark"] .loading-overlay__content {
+  background: var(--color-bg-secondary, #1f2937);
+}
+
+.dark .loading-overlay__message,
+[data-theme="dark"] .loading-overlay__message {
+  color: var(--color-text-secondary, #9ca3af);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .loading-overlay__content {
+    padding: 1.5rem;
+    min-width: 160px;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+  }
+}
+</style>

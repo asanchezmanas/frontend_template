@@ -1,0 +1,364 @@
+<!-- 
+  Toast Notification System
+  
+  Displays temporary notifications to users
+  Works with Alpine.js for reactivity
+  
+  Usage in base.html (before </body>):
+  {% include 'includes/toast-notifications.html' %}
+  
+  Trigger from JavaScript:
+  window.showToast('Success message', 'success');
+  window.showToast('Error occurred', 'error');
+  window.showToast('Warning!', 'warning');
+  window.showToast('Info message', 'info');
+  
+  Or dispatch event:
+  window.dispatchEvent(new CustomEvent('notification:show', {
+    detail: { message: 'Hello!', type: 'success' }
+  }));
+-->
+
+<div 
+  x-data="toastNotifications()"
+  x-init="init()"
+  class="toast-container"
+>
+  <!-- Toast Stack -->
+  <div class="toast-stack">
+    <template x-for="toast in toasts" :key="toast.id">
+      <div
+        x-show="toast.visible"
+        x-transition:enter="toast-enter"
+        x-transition:enter-start="toast-enter-start"
+        x-transition:enter-end="toast-enter-end"
+        x-transition:leave="toast-leave"
+        x-transition:leave-start="toast-leave-start"
+        x-transition:leave-end="toast-leave-end"
+        @click="removeToast(toast.id)"
+        class="toast"
+        :class="'toast--' + toast.type"
+        role="alert"
+      >
+        <!-- Icon -->
+        <div class="toast__icon">
+          <!-- Success Icon -->
+          <svg x-show="toast.type === 'success'" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M16.6667 5L7.50002 14.1667L3.33335 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <!-- Error Icon -->
+          <svg x-show="toast.type === 'error'" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <!-- Warning Icon -->
+          <svg x-show="toast.type === 'warning'" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 6V10M10 14H10.01M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <!-- Info Icon -->
+          <svg x-show="toast.type === 'info'" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 9V13M10 6H10.01M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        
+        <!-- Message -->
+        <div class="toast__message" x-text="toast.message"></div>
+        
+        <!-- Close Button -->
+        <button 
+          @click.stop="removeToast(toast.id)"
+          class="toast__close"
+          aria-label="Close"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+/**
+ * Toast Notifications Alpine.js Component
+ */
+document.addEventListener('alpine:init', () => {
+  Alpine.data('toastNotifications', () => ({
+    toasts: [],
+    nextId: 1,
+    defaultDuration: 5000, // 5 seconds
+
+    init() {
+      // Listen for global notification events
+      window.addEventListener('notification:show', (event) => {
+        this.show(event.detail.message, event.detail.type, event.detail.duration);
+      });
+
+      // Listen for theme events (from theme customizer)
+      window.addEventListener('theme:saved', () => {
+        this.show('Theme saved successfully', 'success');
+      });
+
+      window.addEventListener('theme:reset', () => {
+        this.show('Theme reset to default', 'info');
+      });
+
+      // Listen for other app events
+      window.addEventListener('data:saved', () => {
+        this.show('Changes saved', 'success');
+      });
+
+      window.addEventListener('data:error', (event) => {
+        this.show(event.detail?.message || 'An error occurred', 'error');
+      });
+    },
+
+    show(message, type = 'info', duration = null) {
+      const id = this.nextId++;
+      const toast = {
+        id,
+        message,
+        type,
+        visible: false,
+      };
+
+      // Add to stack
+      this.toasts.push(toast);
+
+      // Show with slight delay for animation
+      setTimeout(() => {
+        const index = this.toasts.findIndex(t => t.id === id);
+        if (index !== -1) {
+          this.toasts[index].visible = true;
+        }
+      }, 10);
+
+      // Auto-remove after duration
+      const timeout = duration || this.defaultDuration;
+      setTimeout(() => {
+        this.removeToast(id);
+      }, timeout);
+    },
+
+    removeToast(id) {
+      const index = this.toasts.findIndex(t => t.id === id);
+      if (index !== -1) {
+        // Hide first (for animation)
+        this.toasts[index].visible = false;
+        
+        // Remove after animation completes
+        setTimeout(() => {
+          this.toasts = this.toasts.filter(t => t.id !== id);
+        }, 300);
+      }
+    },
+
+    success(message, duration) {
+      this.show(message, 'success', duration);
+    },
+
+    error(message, duration) {
+      this.show(message, 'error', duration);
+    },
+
+    warning(message, duration) {
+      this.show(message, 'warning', duration);
+    },
+
+    info(message, duration) {
+      this.show(message, 'info', duration);
+    }
+  }));
+});
+
+/**
+ * Global helper functions
+ */
+window.showToast = function(message, type = 'info', duration = null) {
+  window.dispatchEvent(new CustomEvent('notification:show', {
+    detail: { message, type, duration }
+  }));
+};
+
+// Shorthand helpers
+window.toast = {
+  success: (msg, duration) => window.showToast(msg, 'success', duration),
+  error: (msg, duration) => window.showToast(msg, 'error', duration),
+  warning: (msg, duration) => window.showToast(msg, 'warning', duration),
+  info: (msg, duration) => window.showToast(msg, 'info', duration),
+};
+</script>
+
+<style>
+/* Toast Container */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+/* Toast Card */
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  padding: 1rem 1.25rem;
+  
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  background: white;
+  border-radius: var(--radius-lg, 0.5rem);
+  box-shadow: var(--shadow-lg, 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1));
+  
+  pointer-events: auto;
+  cursor: pointer;
+  
+  border-left: 4px solid;
+  
+  transition: all 0.2s ease;
+}
+
+.toast:hover {
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-xl, 0 25px 50px -12px rgb(0 0 0 / 0.25));
+}
+
+/* Toast Types */
+.toast--success {
+  border-left-color: var(--color-success-500, #10b981);
+}
+
+.toast--success .toast__icon {
+  color: var(--color-success-500, #10b981);
+}
+
+.toast--error {
+  border-left-color: var(--color-error-500, #ef4444);
+}
+
+.toast--error .toast__icon {
+  color: var(--color-error-500, #ef4444);
+}
+
+.toast--warning {
+  border-left-color: var(--color-warning-500, #f59e0b);
+}
+
+.toast--warning .toast__icon {
+  color: var(--color-warning-500, #f59e0b);
+}
+
+.toast--info {
+  border-left-color: var(--color-brand-500, #3b82f6);
+}
+
+.toast--info .toast__icon {
+  color: var(--color-brand-500, #3b82f6);
+}
+
+/* Toast Elements */
+.toast__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.toast__message {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.5;
+}
+
+.toast__close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-base, 0.25rem);
+  
+  color: var(--color-text-tertiary, #9ca3af);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toast__close:hover {
+  background: var(--color-bg-secondary, #f3f4f6);
+  color: var(--color-text-primary, #1f2937);
+}
+
+/* Animations */
+.toast-enter {
+  transition: all 0.3s ease-out;
+}
+
+.toast-enter-start {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.toast-enter-end {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-leave {
+  transition: all 0.2s ease-in;
+}
+
+.toast-leave-start {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-leave-end {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+/* Dark Mode */
+.dark .toast,
+[data-theme="dark"] .toast {
+  background: var(--color-bg-secondary, #1f2937);
+}
+
+.dark .toast__message,
+[data-theme="dark"] .toast__message {
+  color: var(--color-text-primary, #f3f4f6);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .toast-container {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+  }
+  
+  .toast-stack {
+    align-items: stretch;
+  }
+  
+  .toast {
+    min-width: auto;
+    max-width: none;
+  }
+}
+</style>

@@ -1,0 +1,32 @@
+<!-- templates/includes/scripts.html -->
+<!-- Page Configuration -->
+<script id="page-config" type="application/json">
+{
+    "user": {{ user | tojson if user else 'null' }},
+    "page": "{{ request.path }}",
+    "baseUrl": "{{ request.base_url }}",
+    "csrfToken": "{{ csrf_token() if csrf_token else '' }}",
+    "debug": {{ 'true' if config.DEBUG else 'false' }}
+}
+</script>
+<!-- Initial Data (optional) -->
+{% if initial_data %}
+<script id="initial-data" type="application/json">
+{{ initial_data | tojson }}
+</script>
+{% endif %}
+<!-- Core JavaScript (order matters) -->
+<script src="/static/js/core/utils.js"></script>
+<script src="/static/js/core/state.js"></script>
+<script src="/static/js/core/event-bus.js"></script>
+<script src="/static/js/core/api.js"></script>
+<!-- Managers -->
+<script src="/static/js/managers/ui-manager.js"></script>
+<script src="/static/js/managers/experiment-manager.js"></script>
+<script src="/static/js/managers/metrics-manager.js"></script>
+<!-- Core App -->
+<script src="/static/js/core/app.js"></script>
+<!-- Initialize -->
+<script src="/static/js/init.js"></script>
+<!-- Extra JS from child templates -->
+{% block extra_js %}{% endblock %}

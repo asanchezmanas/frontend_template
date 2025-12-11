@@ -1,0 +1,148 @@
+{# 
+  Profile Edit Modal Example
+  
+  Based on TailAdmin profile modal
+  Uses the reusable modal component
+  
+  Usage in your page:
+  1. Add Alpine.js variable: x-data="{ isProfileModalOpen: false }"
+  2. Include this template: {% include 'examples/profile-edit-modal.html' %}
+  3. Trigger: <button @click="isProfileModalOpen = true">Edit Profile</button>
+#}
+
+{% extends 'components/modal.html' %}
+
+{% set modal_var = 'isProfileModalOpen' %}
+{% set modal_id = 'profileModal' %}
+{% set title = 'Edit Personal Information' %}
+{% set subtitle = 'Update your details to keep your profile up-to-date.' %}
+{% set max_width = '700px' %}
+{% set scrollable = true %}
+
+{% block modal_body %}
+<form>
+  <!-- Social Links Section -->
+  <div class="modal-section">
+    <h5 class="modal-section-title">Social Links</h5>
+    
+    <div class="modal-form-grid">
+      <div class="modal-field-group">
+        <label>Facebook</label>
+        <input
+          type="url"
+          name="facebook"
+          value="https://facebook.com/username"
+          placeholder="https://facebook.com/..."
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>X.com (Twitter)</label>
+        <input
+          type="url"
+          name="twitter"
+          value="https://x.com/username"
+          placeholder="https://x.com/..."
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>LinkedIn</label>
+        <input
+          type="url"
+          name="linkedin"
+          value="https://linkedin.com/in/username"
+          placeholder="https://linkedin.com/in/..."
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>Instagram</label>
+        <input
+          type="url"
+          name="instagram"
+          value="https://instagram.com/username"
+          placeholder="https://instagram.com/..."
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Information Section -->
+  <div class="modal-section">
+    <h5 class="modal-section-title">Personal Information</h5>
+    
+    <div class="modal-form-grid">
+      <div class="modal-field-group">
+        <label>First Name</label>
+        <input
+          type="text"
+          name="first_name"
+          value="John"
+          placeholder="Enter first name"
+          required
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>Last Name</label>
+        <input
+          type="text"
+          name="last_name"
+          value="Doe"
+          placeholder="Enter last name"
+          required
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>Email Address</label>
+        <input
+          type="email"
+          name="email"
+          value="john.doe@example.com"
+          placeholder="Enter email address"
+          required
+        />
+      </div>
+
+      <div class="modal-field-group">
+        <label>Phone</label>
+        <input
+          type="tel"
+          name="phone"
+          value="+1 234 567 8900"
+          placeholder="Enter phone number"
+        />
+      </div>
+
+      <div class="modal-field-group modal-form-grid--full">
+        <label>Bio</label>
+        <input
+          type="text"
+          name="bio"
+          value="Team Manager"
+          placeholder="Enter your bio"
+        />
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block modal_footer %}
+<button
+  @click="isProfileModalOpen = false"
+  type="button"
+  class="btn btn-secondary"
+>
+  Close
+</button>
+<button
+  type="button"
+  class="btn btn-primary"
+  @click="$parent.saveProfile()"
+>
+  Save Changes
+</button>
+{% endblock %}

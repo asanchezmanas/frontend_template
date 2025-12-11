@@ -1,0 +1,67 @@
+{# 
+  Environment & Page Configuration Template
+  
+  This template should be included in your base.html <head> section
+  It injects environment variables and page data from FastAPI backend
+  
+  Usage in base.html:
+  {% include 'includes/env-config.html' %}
+#}
+
+<script>
+  /**
+   * Environment Configuration injected from backend
+   * These variables are set by FastAPI and rendered server-side
+   */
+  window.__ENV__ = '{{ env }}';  {# 'development', 'staging', or 'production' #}
+  
+  window.__CONFIG__ = {
+    // API Configuration
+    apiUrl: '{{ api_url }}',
+    apiBasePath: '{{ api_base_path }}',
+    
+    // Supabase Configuration (only public keys!)
+    supabaseUrl: '{{ supabase_url }}',
+    supabaseAnonKey: '{{ supabase_anon_key }}',
+    
+    // Feature Flags
+    debug: {{ 'true' if debug else 'false' }},
+    enableLogging: {{ 'true' if enable_logging else 'false' }},
+    mockApi: {{ 'true' if mock_api else 'false' }},
+    
+    // App Info
+    appVersion: '{{ app_version }}',
+    appName: '{{ app_name }}',
+    
+    // Add any other backend-provided config here
+  };
+  
+  /**
+   * Page Configuration
+   * Current page context and user data
+   */
+  window.__PAGE__ = {
+    user: {{ user | tojson if user else 'null' }},
+    path: "{{ request.path }}",
+    baseUrl: "{{ request.base_url }}",
+    {% if csrf_token %}
+    csrfToken: "{{ csrf_token() }}",
+    {% endif %}
+    locale: "{{ request.headers.get('Accept-Language', 'en').split(',')[0] }}"
+  };
+  
+  {% if debug %}
+  // Log config in debug mode
+  console.group('🔧 Backend Configuration');
+  console.log('Config:', window.__CONFIG__);
+  console.log('Page:', window.__PAGE__);
+  console.groupEnd();
+  {% endif %}
+</script>
+
+{# Initial Data (optional pre-loaded data for the page) #}
+{% if initial_data %}
+<script id="initial-data" type="application/json">
+{{ initial_data | tojson }}
+</script>
+{% endif %}

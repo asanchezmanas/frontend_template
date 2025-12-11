@@ -1,0 +1,86 @@
+{# 
+  Address Edit Modal Example
+  
+  Based on TailAdmin address modal
+  Uses the reusable modal component
+  
+  Usage in your page:
+  1. Add Alpine.js variable: x-data="{ isAddressModalOpen: false }"
+  2. Include this template: {% include 'examples/address-edit-modal.html' %}
+  3. Trigger: <button @click="isAddressModalOpen = true">Edit Address</button>
+#}
+
+{% extends 'components/modal.html' %}
+
+{% set modal_var = 'isAddressModalOpen' %}
+{% set modal_id = 'addressModal' %}
+{% set title = 'Edit Address' %}
+{% set subtitle = 'Update your address details.' %}
+{% set max_width = '700px' %}
+{% set scrollable = false %}
+
+{% block modal_body %}
+<form>
+  <div class="modal-form-grid">
+    <div class="modal-field-group">
+      <label>Country</label>
+      <input
+        type="text"
+        name="country"
+        value="United States"
+        placeholder="Enter country"
+        required
+      />
+    </div>
+
+    <div class="modal-field-group">
+      <label>City/State</label>
+      <input
+        type="text"
+        name="city_state"
+        value="Arizona, United States"
+        placeholder="Enter city and state"
+        required
+      />
+    </div>
+
+    <div class="modal-field-group">
+      <label>Postal Code</label>
+      <input
+        type="text"
+        name="postal_code"
+        value="85001"
+        placeholder="Enter postal code"
+        required
+      />
+    </div>
+
+    <div class="modal-field-group">
+      <label>TAX ID</label>
+      <input
+        type="text"
+        name="tax_id"
+        value="AS4568384"
+        placeholder="Enter TAX ID"
+      />
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block modal_footer %}
+<button
+  @click="isAddressModalOpen = false"
+  type="button"
+  class="btn btn-secondary"
+>
+  Close
+</button>
+<button
+  type="button"
+  class="btn btn-primary"
+  @click="$parent.saveAddress()"
+>
+  Save Changes
+</button>
+{% endblock %}
